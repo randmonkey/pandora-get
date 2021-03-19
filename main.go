@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -37,11 +38,15 @@ func main() {
 	for {
 		pandoraClient := pandora.NewClient(server, token)
 		now := time.Now()
-		res, err := pandoraClient.GetQueryResult(spl, now.Add(-10*interval), now, 10000, 60*time.Second)
+		res, err := pandoraClient.GetQueryResult(spl, now.Add(-1*interval), now, 10000, 60*time.Second)
 		if err != nil {
 			log.Printf("failed to get result from pandora, error %+v", err)
 		}
-		fmt.Println(res)
+		if len(res) > 0 {
+			buf, _ := json.Marshal(res[0])
+			fmt.Println(string(buf))
+		}
+
 		time.Sleep(interval)
 	}
 
